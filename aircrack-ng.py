@@ -2,6 +2,11 @@ import requests
 import os
 import bs4
 
+# sudo airmon-ng check kill
+# sudo airmon-ng start wlan0
+# sudo airodump-ng wlan0 -c KANAL-NUMBER --bssid MAC-ADDR -w test
+# sudo aircrack-ng test-01.cap -w dsadas  -0
+
 alfabe  = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 #fuzzing = "https://raw.githubusercontent.com/kennyn510/wpa2-wordlists/master/Wordlists/Ultimate2016/"
 fuzzing = "https://raw.githubusercontent.com/kennyn510/wpa2-wordlists/master/Wordlists/Rockyou/"
