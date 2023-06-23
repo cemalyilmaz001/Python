@@ -8,6 +8,8 @@ filter = 'tcp port 80'
 filter_criteria = "tcp and ip host 192.168.1.1"
 filter_icmp = "icmp"
 
+target_ip = "192.168.1.100" # Engellenecek hedef IP adresi
+
 # Paket yakalama fonksiyonu
 def packet_callback(packet):
     print(packet.show())
@@ -28,10 +30,15 @@ def packet_callback(packet):
         if "rm -rf" in command:
             print(f"[!] Zararlı Komut Tespit Edildi: {command}")
             packet.drop()
-
+            
+def block_packet(packet):
+    if packet.haslayer(IP) and packet[IP].dst == target_ip:
+        print(f"[+] Engellenen paket: {packet.summary()}")
+        return
 
 # Ağ trafiğini dinlemek için sniff fonksiyonu kullanılır
 sniff(filter="tcp", prn=packet_callback, store=0)
+#sniff(filter="ip", prn=block_packet)
 #sniff(prn=packet_capture, filter=filter_criteria)
 #sniff(filter=filter, iface=interfaceEth0, prn=packet_callback)
 #sniff(filter=filter_icmp, iface=interfaceW, prn=sniff_ICMP)
