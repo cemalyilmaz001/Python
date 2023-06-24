@@ -8,21 +8,16 @@ import subprocess
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def drop_packet(source_ip):
-    # İptables komutunu oluşturun
     iptables_cmd = f"sudo iptables -A INPUT -s {source_ip} -j DROP;sudo iptables-save"
-    
-    # Komutu çalıştırın
     subprocess.run(iptables_cmd, shell=True)
 
-def paket_kayit(alarm,src,dst):
-    drop_packet(str(src))
-
+def paket_kayit(alarm,kaynak,hedef):
     # Veritabanı bağlantısını oluştur
     conn = sqlite3.connect('makina.db3')
 
     # Veriyi veritabanına kaydet
     try:
-        conn.execute("INSERT INTO paket_analiz (alarm, src, dst) VALUES (?, ?, ?)", (alarm, src, dst))
+        conn.execute("INSERT INTO paket_analiz (alarm, kaynak, hedef) VALUES (?, ?, ?)", (alarm, kaynak, hedef))
         conn.commit()
     except sqlite3.IntegrityError:
         logging.exception("Hata mesajı:")
@@ -33,74 +28,25 @@ def paket_kayit(alarm,src,dst):
 
 def alarm_paketini_yakala(paket):    
     try:
-        # Alarm durumunu belirleyen bir koşul oluşturun
-        if paket.haslayer(TCP):
-            # TCP paketlerini yakala ve istediğiniz koşulu kontrol et
-            if paket[TCP].flags == "F":
-                src = paket[IP].src
-                dst = paket[IP].dst
-                paket_kayit("FIN bayrağı tespit edildi!",src,dst)
-                print("ALARM: FIN bayrağı tespit edildi!")
-                return None
-
-            elif paket[TCP].flags & 0x0F != 0x02:  # Zararlı bir tarama olarak kabul edilebilecek TCP bayrakları
-                src = paket[IP].src
-                dst = paket[IP].dst
-                paket_kayit("Zararlı TCP taraması tespit edildi!",src,dst)
-                print("ALARM: Zararlı TCP taraması tespit edildi!")
-                print("Kaynak IP: ",src)
-                print("Hedef IP: ", dst)
-                return None
-
-        elif paket.haslayer(ARP):
-            # ARP paketlerini yakala ve istediğiniz koşulu kontrol et
+        # ARP Paketlerinin Tespiti
+        if paket.haslayer(ARP):
             if paket[ARP].op == 1:  # ARP isteği
-                src = paket[IP].src
-                dst = paket[IP].dst
-                paket_kayit("ARP isteği tespit edildi!",src,dst)
+                paket_kayit("ARP isteği tespit edildi!",paket[IP].src,paket[IP].dst)
                 print("ALARM: ARP isteği tespit edildi!")
-                return None
-        elif paket.haslayer(TCP) and paket.getlayer(TCP).flags == "SA":
-            # SYN-ACK (TCP ACK + TCP SYN) bayrağı tespit edildiğinde alarmı bas
-            src = paket[IP].src
-            dst = paket[IP].dst
-            paket_kayit("Port taraması tespit edildi!",src,dst)
-            print("ALARM: Port taraması tespit edildi!")
-            print("Kaynak IP: ", src)
-            print("Hedef IP: ", dst)
-            print("Hedef Port: ", paket[TCP].dport)
+
+        # Port Tarama Tespit
+        elif paket.haslayer(TCP) and paket[TCP].flags == 2:  
+            print("ALARM: Port taraması tespit edildi! Kaynak IP:", paket[IP].src, "Hedef Port:", paket[TCP].dport)
+            paket_kayit(f"Port taraması tespit edildi! --> Port: {str(paket[TCP].dport)}",paket[IP].src, paket[IP].dst)
+
+        # Ping Tarama Tespit
         elif paket.haslayer(ICMP) and paket.getlayer(ICMP).type == 8:
-            # ICMP Echo Request (Ping) paketi tespit edildiğinde alarmı bas
-            src = paket[IP].src
-            dst = paket[IP].dst
-            paket_kayit("Ping taraması tespit edildi!",src,dst)
-            print("ALARM: Ping taraması tespit edildi!")
-            print("Kaynak IP: ", src)
-            print("Hedef IP: ", dst)
-            return None
-        elif paket.haslayer(IP):
-            if paket[IP].flags == 0x02:  # Zararlı bir tarama olarak kabul edilebilecek IP bayrakları
-                src = paket[IP].src
-                dst = paket[IP].dst
-                paket_kayit("Zararlı IP taraması tespit edildi!",src,dst)
-                print("ALARM: Zararlı IP taraması tespit edildi!")
-                print("Kaynak IP: ", src)
-                print("Hedef IP: ", dst)
-                return None
-
-        elif paket.haslayer(UDP):
-            udp = paket[UDP]
-            src = paket[IP].src
-            dst = paket[IP].dst
-            paket_kayit("Zararlı UDP taraması tespit edildi!",src,dst)
-            print("ALARM: Zararlı UDP taraması tespit edildi!")
-            print("Kaynak IP: ", src)
-            print("Hedef IP: ", dst)
-            return None
-
+            paket_kayit("Ping taraması tespit edildi!",paket[IP].src,paket[IP].dst)
+            print("ALARM: Ping taraması tespit edildi! Kaynak IP: " + paket[IP].src + " Hedef IP: " + paket[IP].dst)
     except BaseException as a:
-        logging.exception("Hata mesajı:")
-        traceback.print_exc()
+        pass
+        #logging.exception("Hata mesajı:")
+        #traceback.print_exc()
 
 # Sniffer'ı başlat
 sniff(prn=alarm_paketini_yakala, filter="ip or tcp or arp or udp", store=0)
