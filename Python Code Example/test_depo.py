@@ -9,6 +9,17 @@ import os
 import sys
 from time import sleep
 import sqlite3
+from cryptography.fernet import Fernet
+import sqlite3
+import os
+from sqlite3 import OperationalError
+from bs4 import BeautifulSoup
+import curses
+import psutil
+import time
+import requests
+import re
+
 
 class _aksipi_():
     def __init__(self):
@@ -68,6 +79,88 @@ class _aksipi_():
         
         self.db.commit()
         self.db.close()
+
+class Demo():
+    def __init__(self):
+        self.cwd = os.getcwd() + "/"
+
+    def keys(self):
+        # Rastgele anahtar oluşturma
+        key = Fernet.generate_key()
+        # Veritabanına bağlanma
+        conn = sqlite3.connect(f'{self.cwd}veritabani.db3')
+        # Bir cursor oluşturma
+        cursor = conn.cursor()
+        # Keys değerini veritabanına ekleme
+        cursor.execute("INSERT INTO secret (keys) VALUES (?)", (f'{str(key)}',))
+        # Bağlantıyı kaydetme ve kapatma
+        conn.commit()
+        conn.close()
+
+    def hava(self):
+        # Hava Durumu
+        mgm = "https://www.mgm.gov.tr/tahmin/gunluk-tahmin.aspx"  
+        response = requests.get(mgm)
+
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, "html.parser")
+            tablo = soup.find_all("h4")
+            t = 0
+            data = []
+            for row in tablo:
+                t += 1
+                if t == 3:
+                    data.append(row.text.strip())
+
+        d = ""
+        b = "'"
+    
+    def linux(self):
+        # CPU Kullanımı
+        cpu_percent = psutil.cpu_percent(interval=1)
+        # Bellek Kullanımı
+        memory = psutil.virtual_memory()
+        memory_percent = memory.percent
+        # Disk Kullanımı
+        disk = psutil.disk_usage("/")
+        disk_percent = disk.percent
+    
+    def ekonomi(self):
+        # Ekonomi Verileri
+        url = "https://www.ekonomim.com/"
+        response = requests.get(url)
+        t = 0
+        y = 0
+        name = []
+        vall = []
+        tot  = []
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, "html.parser")
+            
+            for borsa in soup.find_all("span", {"class": "name"}):
+                t += 1
+                if t >= 6:
+                    pass
+                else:
+                    name.append(borsa.text.strip())
+
+            for valls in soup.find_all("span", {"class": "val"}):
+                y += 1
+                if y >= 6:
+                    pass
+                else:
+                    vall.append(valls.text.strip())
+
+            for b,v in zip(name,vall):
+                d = f"{b}: {v}"
+                tot.append(d)
+
+    # {str(data).strip("[]").replace(b,d)} {os.getlogin()}  
+    # CPU Usage (%): {cpu_percent}  Memory Usage (%): {memory_percent}  Disk Usage (%): {disk_percent} 
+    # Uygulama UİD: {os.getuid()} - {os.getpid()} 
+    # Ekonomi {str(tot).strip("[]").replace(b,d)}
+     
+
 
 if __name__ == "__main__":
     l = _aksipi_()
