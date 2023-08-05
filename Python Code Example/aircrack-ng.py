@@ -12,20 +12,25 @@ alfabe  = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','
 fuzzing = "https://raw.githubusercontent.com/kennyn510/wpa2-wordlists/master/Wordlists/Rockyou/"
 pwd     = os.getcwd()
 
+
 def scan():
     for alf in alfabe:
-        if os.path.exists(f"{pwd}/{str(alf)}.txt"):
+        if os.path.exists(f"{pwd}/{str(alf)}.txt"): # Dosya varsa
             pass
-        else:
+        else:                                       # Dosya yoksa
+            # Denenecek parolayı indirme işlemi
             contents = requests.get(f"{fuzzing}{str(alf)}.txt")
             soup = bs4.BeautifulSoup(contents.content, "html.parser")
+            # Dosyayı kaydetme
             files = open(f'{pwd}/{str(alf)}.txt','w')
             files.write(str(soup.prettify()))
             files.close()
-            
+            # İndirilen parola dosyasının yolu
             dosya = f"{str(pwd)}/{str(alf)}.txt"
+            # Crack işlemi ve kaydetme
             os.system(f'sudo aircrack-ng {str(pwd)}/test-01.cap -w {str(dosya)} -0 >> kayit')
-
+        
+        # İndirilen dosyayı silme işlemi
         os.remove(f"{str(pwd)}/{str(alf)}.txt")
         
 if __name__ == "__main__":
