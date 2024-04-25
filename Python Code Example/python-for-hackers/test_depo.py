@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-# sudo watch -n 2 "tcpdump -nnn -t -c 200 | cut -f 1,2,3,4 -d '.' | sort | uniq -c | sort -nr | head -n 20 | grep  'IP' >> abc.txt"
-
 from subprocess import Popen, PIPE
 import datetime
 import requests
