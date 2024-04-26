@@ -27,7 +27,7 @@ class Crypto:
 		time.sleep(2)
 
 
-	# python3 hack.py -H admin -t md5 -r cryptography
+	# python3 x.py -H admin -t md5 -r cryptography
 	def criptograpy(self,host,port):
 		metin = str(host)
 		crypt = str(port)
@@ -52,7 +52,7 @@ class Crypto:
 			hasobj5.update(metin.encode())
 			print(hasobj5.hexdigest())
 	
-	# python3 hack.py -H 21232f297a57a5a743894a0e4a801fc3 -t md5 -r deciphering
+	# python3 x.py -H 21232f297a57a5a743894a0e4a801fc3 -t md5 -r deciphering
 	def deciphering(self,host,port):
 		sha_hash    = str(host)
 		crypt       = str(port)
@@ -117,4 +117,3 @@ class Crypto:
 					print(colored("[*] " + str(p) + " Denenen Parola: " + str(password), 'red'))
 					p += 1
 			print("listede bulunamadı")
-com
