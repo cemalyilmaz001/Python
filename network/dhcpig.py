@@ -4,8 +4,6 @@
 """
 enhanced DHCP exhaustion attack.
 
-
-
 Usage:
     pig.py [-h -v -6 -1 -s -f -t -a -i -o -l -x -y -z -g -r -n -c ] <interface>
   
