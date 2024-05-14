@@ -1,81 +1,15 @@
 #!/usr/bin/python3
 
-class LabAsistani(object):
-    def __init__(self):
-        pass
 
-    def lablaraGir(self):
-        pass
-
-
-class Asistan(LabAsistani):
-    def __init__(self):
-        self.ofisSaati = 1231
-    
-    def quizYap(self):
-        pass    
-
-class OgrtmGorevlisi(Asistan):
-    def __init__(self):
-        self.kapiNo = 33
-
-    def senatoToplanti(self):
-        pass
-    
-    def sinavYap(self):
-        pass
-
-
-
-# --
+#
+# Calisan
 # 
-class Akademisyen(OgrtmGorevlisi):
+class Calisan():
     def __init__(self):
-        self.bolum = "Bilişim Güvenliği"
-        self.ünvan = "SOC"
-
-    def derseGir(self):
-        print("hello World")
-
-
-
-
-class Bilgiİslem(Akademisyen):
-    def __init__(self):
-        self.gorev = ""
-
-    def networkKurulum(self):
-        pass
-
-
-class GuvenlkGorevlisi(Bilgiİslem):
-    def __init__(self):
-        self.belge = ""
-
-    def nobel(self):
-        pass
-
-# --
-# 
-class Memur(GuvenlkGorevlisi):
-    def __init__(self):
-        self.departman = ""
-        self.mesai = ""
-    
-    def calis(self):
-        pass
-    
-
-
-
-
-# 1
-# 
-class Calisan(Memur):
-    def __init__(self):
-        self.adSoyad = "dasd das"
-        self.telefon = 5555555555
-        self.eposta  = "c@gmail.com" 
+        super().__init__()
+        self.adSoyad = "Cemal YILMAZ"
+        self.telefon = 5523213213
+        self.eposta  = "x@yaani.com" 
 
     def giris(self):
         self.derseGir()
@@ -88,6 +22,88 @@ class Calisan(Memur):
 
 
 
+#
+# Akademisyen
+#
+class LabAsistani():
+    def __init__(self):
+        super().__init__()
+        pass
+
+    def lablaraGir(self):
+        pass
+
+
+class Asistan(LabAsistani):
+    def __init__(self):
+        super().__init__()
+        self.ofisSaati = 1231
+    
+    def quizYap(self):
+        pass    
+
+class OgrtmGorevlisi(Akademisyen):
+    def __init__(self):
+        super().__init__()
+        self.kapiNo = 33
+
+    def senatoToplanti(self):
+        pass
+    
+    def sinavYap(self):
+        pass
+
+class Akademisyen(Calisan):
+    def __init__(self):
+        super().__init__()
+        self.bolum = "Bilişim Güvenliği"
+        self.ünvan = "SOC"
+
+    def derseGir(self):
+        print("hello World")
+
+
+
+#
+# Memur
+#
+class Bilgiİslem(Memur):
+    def __init__(self):
+        super().__init__()
+        self.gorev = ""
+
+    def networkKurulum(self):
+        pass
+
+
+class GuvenlkGorevlisi(Memur):
+    def __init__(self):
+        super().__init__()
+        self.belge = "xx11"
+
+    def nobel(self):
+        pass
+
+
+class Memur(Calisan):
+    def __init__(self):
+        super().__init__()
+        self.departman = "Bilgi İşlem"
+        self.mesai     = "8.5"
+    
+    def calis(self):
+        print(self.adSoyad)
+
+
 if __name__ == "__main__":
-    xx = Calisan()
-    xx.giris()
+    memur = Memur()
+    print(memur.departman)
+    print(memur.mesai)
+    memur.calis()
+
+    akadmsyn = Akademisyen()
+    print(akadmsyn.bolum)
+    print(akadmsyn.ünvan)
+
+
+
