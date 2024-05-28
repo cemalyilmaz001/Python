@@ -21,7 +21,6 @@ class Calisan():
         pass
 
 
-
 #
 # Akademisyen
 #
@@ -42,6 +41,15 @@ class Asistan(LabAsistani):
     def quizYap(self):
         pass    
 
+class Akademisyen(Calisan):
+    def __init__(self):
+        super().__init__()
+        self.bolum = "Bilişim Güvenliği"
+        self.ünvan = "SOC"
+
+    def derseGir(self):
+        print("hello World")
+
 class OgrtmGorevlisi(Akademisyen):
     def __init__(self):
         super().__init__()
@@ -53,20 +61,22 @@ class OgrtmGorevlisi(Akademisyen):
     def sinavYap(self):
         pass
 
-class Akademisyen(Calisan):
-    def __init__(self):
-        super().__init__()
-        self.bolum = "Bilişim Güvenliği"
-        self.ünvan = "SOC"
-
-    def derseGir(self):
-        print("hello World")
-
 
 
 #
 # Memur
 #
+
+class Memur(Calisan):
+    def __init__(self):
+        super().__init__()
+        self.departman = "Bilgi İşlem"
+        self.mesai     = "8.5"
+        
+    def calis(self):
+        print(self.adSoyad)
+
+        
 class Bilgiİslem(Memur):
     def __init__(self):
         super().__init__()
@@ -85,14 +95,6 @@ class GuvenlkGorevlisi(Memur):
         pass
 
 
-class Memur(Calisan):
-    def __init__(self):
-        super().__init__()
-        self.departman = "Bilgi İşlem"
-        self.mesai     = "8.5"
-    
-    def calis(self):
-        print(self.adSoyad)
 
 
 if __name__ == "__main__":
@@ -104,6 +106,5 @@ if __name__ == "__main__":
     akadmsyn = Akademisyen()
     print(akadmsyn.bolum)
     print(akadmsyn.ünvan)
-
 
 
